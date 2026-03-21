@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试页面</title>
+</head>
+<body>
+  <h1>测试页面 - 如果能看到这里，说明基础HTML正常</h1>
+  <div id="app"></div>
+  <script>
+    console.log('原生JavaScript正常工作');
+    document.getElementById('app').innerHTML = '<p>动态内容已加载</p>';
+    
+    // 测试API连接
+    fetch('http://localhost:3003/api/health')
+      .then(res => res.json())
+      .then(data => {
+        console.log('后端连接成功:', data);
+        document.getElementById('app').innerHTML += '<p>✅ 后端API连接成功</p>';
+      })
+      .catch(err => {
+        console.error('后端连接失败:', err);
+        document.getElementById('app').innerHTML += '<p>❌ 后端API连接失败: ' + err.message + '</p>';
+      });
+  </script>
+</body>
+</html>

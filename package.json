@@ -1,0 +1,19 @@
+{
+  "name": "campus-learning-platform",
+  "version": "1.0.0",
+  "description": "校园学习规划平台 - 支持课程学习、活动推荐、考研就业规划",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["campus", "learning", "platform"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

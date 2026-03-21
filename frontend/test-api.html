@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>API测试</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    .success { background: #d4edda; border-color: #c3e6cb; }
+    .error { background: #f8d7da; border-color: #f5c6cb; }
+    pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>API接口测试</h1>
+  <button onclick="testAll()">测试所有接口</button>
+  <div id="results"></div>
+
+  <script>
+    async function testAPI(name, url) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const status = response.ok && data.success ? 'success' : 'error';
+        addResult(name, url, status, data);
+      } catch (error) {
+        addResult(name, url, 'error', { error: error.message });
+      }
+    }
+
+    function addResult(name, url, status, data) {
+      const div = document.createElement('div');
+      div.className = `test ${status}`;
+      div.innerHTML = `
+        <h3>${name}</h3>
+        <p><strong>URL:</strong> ${url}</p>
+        <p><strong>状态:</strong> ${status === 'success' ? '✅ 成功' : '❌ 失败'}</p>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
+      document.getElementById('results').appendChild(div);
+    }
+
+    async function testAll() {
+      document.getElementById('results').innerHTML = '';
+      await testAPI('健康检查', '/api/health');
+      await testAPI('课程列表', '/api/courses');
+      await testAPI('社团列表', '/api/clubs');
+      await testAPI('活动列表', '/api/activities');
+      await testAPI('帖子列表', '/api/posts');
+      await testAPI('排行榜', '/api/leaderboard');
+      await testAPI('推荐生成', '/api/recommendations/generate');
+      await testAPI('学生进度', '/api/student/progress');
+      await testAPI('课表', '/api/schedule');
+    }
+  </script>
+</body>
+</html>

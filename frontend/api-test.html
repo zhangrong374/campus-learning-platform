@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .test-item {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .success { border-color: #4CAF50; background: #f0f9f0; }
+    .error { border-color: #f44336; background: #fef0f0; }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f5f5f5;
+      font-family: monospace;
+      white-space: pre-wrap;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 API连接测试</h1>
+
+  <div class="test-item" id="health-test">
+    <h3>1. 健康检查</h3>
+    <button onclick="testHealth()">测试</button>
+    <div class="result" id="health-result">等待测试...</div>
+  </div>
+
+  <div class="test-item" id="login-test">
+    <h3>2. 登录测试</h3>
+    <button onclick="testLogin()">测试</button>
+    <div class="result" id="login-result">等待测试...</div>
+  </div>
+
+  <div class="test-item" id="courses-test">
+    <h3>3. 获取课程列表</h3>
+    <button onclick="testCourses()">测试</button>
+    <div class="result" id="courses-result">等待测试...</div>
+  </div>
+
+  <div class="test-item" id="auth-test">
+    <h3>4. 获取用户信息 (需要登录)</h3>
+    <button onclick="testAuth()">测试</button>
+    <div class="result" id="auth-result">等待测试...</div>
+  </div>
+
+  <script>
+    let authToken = '';
+
+    async function testHealth() {
+      const result = document.getElementById('health-result');
+      const container = document.getElementById('health-test');
+      result.textContent = '测试中...';
+
+      try {
+        const response = await fetch('http://localhost:3006/api/health');
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        container.classList.remove('error');
+        container.classList.add('success');
+      } catch (error) {
+        result.textContent = '❌ 错误: ' + error.message + '\n\n请确保后端服务正在运行 (端口 3006)';
+        container.classList.remove('success');
+        container.classList.add('error');
+      }
+    }
+
+    async function testLogin() {
+      const result = document.getElementById('login-result');
+      const container = document.getElementById('login-test');
+      result.textContent = '测试中...';
+
+      try {
+        const response = await fetch('http://localhost:3006/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'student1', password: '123456' })
+        });
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+
+        if (data.success) {
+          authToken = data.data.token;
+          container.classList.remove('error');
+          container.classList.add('success');
+        } else {
+          container.classList.remove('success');
+          container.classList.add('error');
+        }
+      } catch (error) {
+        result.textContent = '❌ 错误: ' + error.message;
+        container.classList.remove('success');
+        container.classList.add('error');
+      }
+    }
+
+    async function testCourses() {
+      const result = document.getElementById('courses-result');
+      const container = document.getElementById('courses-test');
+      result.textContent = '测试中...';
+
+      try {
+        const response = await fetch('http://localhost:3006/api/courses');
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        container.classList.remove('error');
+        container.classList.add('success');
+      } catch (error) {
+        result.textContent = '❌ 错误: ' + error.message;
+        container.classList.remove('success');
+        container.classList.add('error');
+      }
+    }
+
+    async function testAuth() {
+      const result = document.getElementById('auth-result');
+      const container = document.getElementById('auth-test');
+
+      if (!authToken) {
+        result.textContent = '⚠️ 请先运行登录测试';
+        return;
+      }
+
+      result.textContent = '测试中...';
+
+      try {
+        const response = await fetch('http://localhost:3006/api/auth/me', {
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        container.classList.remove('error');
+        container.classList.add('success');
+      } catch (error) {
+        result.textContent = '❌ 错误: ' + error.message;
+        container.classList.remove('success');
+        container.classList.add('error');
+      }
+    }
+
+    // 自动运行健康检查
+    window.onload = () => testHealth();
+  </script>
+</body>
+</html>
