@@ -1,9 +1,10 @@
 {
   "name": "campus-learning-platform",
   "version": "1.0.0",
-  "description": "校园学习规划平台 - 前后端一体化部署",
+  "private": true,
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev",
     "start": "node api/index.js"
   },
   "dependencies": {
@@ -15,11 +16,5 @@
     "dotenv": "^16.3.1",
     "multer": "^1.4.5-lts.1",
     "express-validator": "^7.0.1"
-  },
-  "devDependencies": {
-    "@vercel/node": "^3.0.0"
-  },
-  "engines": {
-    "node": ">=18.x"
   }
 }
