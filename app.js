@@ -3,8 +3,8 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-// 使用 PostgreSQL 配置
-const { testConnection } = require('./backend/src/config/database-pg');
+// 使用 MySQL 配置
+const { testConnection } = require('./backend/src/config/database');
 const errorHandler = require('./backend/src/middleware/errorHandler');
 
 // 导入路由
