@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 export interface User {
   id: number
@@ -34,7 +34,6 @@ export const useUserStore = defineStore('user', () => {
     user.value = userData
     token.value = userToken
     localStorage.setItem('token', userToken)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`
   }
 
   // 清除用户信息
@@ -43,16 +42,17 @@ export const useUserStore = defineStore('user', () => {
     profile.value = null
     token.value = null
     localStorage.removeItem('token')
-    delete axios.defaults.headers.common['Authorization']
   }
 
   // 获取当前用户信息
   const fetchCurrentUser = async () => {
     try {
-      const response = await axios.get('/api/auth/me')
-      user.value = response.data.data.user
-      profile.value = response.data.data.profile
-      return response.data
+      const response = await request.get('/student/info')
+      if (response.data.success) {
+        user.value = response.data.data
+        return response.data
+      }
+      throw new Error('获取用户信息失败')
     } catch (error) {
       console.error('获取用户信息失败:', error)
       throw error
@@ -62,10 +62,13 @@ export const useUserStore = defineStore('user', () => {
   // 登录
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { username, password })
-      const { user: userData, token: userToken } = response.data.data
-      setUser(userData, userToken)
-      return response.data
+      const response = await request.post('/auth/login', { username, password })
+      if (response.data.success) {
+        const { user: userData, token: userToken } = response.data.data
+        setUser(userData, userToken)
+        return response.data
+      }
+      throw new Error(response.data.message || '登录失败')
     } catch (error) {
       console.error('登录失败:', error)
       throw error
@@ -75,14 +78,21 @@ export const useUserStore = defineStore('user', () => {
   // 注册
   const register = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post('/api/auth/register', {
+      const response = await request.post('/auth/register', {
         username,
         email,
         password
       })
-      const { user: userData, token: userToken } = response.data.data
-      setUser(userData, userToken)
-      return response.data
+      if (response.data.success) {
+        // 注册成功后自动登录
+        const loginResponse = await request.post('/auth/login', { username, password })
+        if (loginResponse.data.success) {
+          const { user: userData, token: userToken } = loginResponse.data.data
+          setUser(userData, userToken)
+          return response.data
+        }
+      }
+      throw new Error(response.data.message || '注册失败')
     } catch (error) {
       console.error('注册失败:', error)
       throw error
@@ -92,11 +102,6 @@ export const useUserStore = defineStore('user', () => {
   // 登出
   const logout = () => {
     clearUser()
-  }
-
-  // 初始化token
-  if (token.value) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
   }
 
   return {
