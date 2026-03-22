@@ -23,6 +23,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 根路径
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'API is running', timestamp: new Date().toISOString() });
+});
+
+// API 路由
 app.use('/api', indexRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
