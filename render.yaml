@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: campus-learning-platform
+    runtime: node
+    buildCommand: cd frontend && npm install && npm run build && cd .. && npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
