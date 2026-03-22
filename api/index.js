@@ -23,7 +23,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 根路径
+// 根路径 - 处理 /api
 app.get('/', (req, res) => {
   res.json({ success: true, message: 'API is running', timestamp: new Date().toISOString() });
 });

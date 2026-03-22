@@ -10,7 +10,11 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'campus_learning_platform',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  // TiDB Cloud 需要 SSL 连接
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // 测试数据库连接
