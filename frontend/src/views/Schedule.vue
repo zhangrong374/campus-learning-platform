@@ -28,7 +28,17 @@
                 shadow="hover"
               >
                 <div class="course-info">
-                  <div class="course-name">{{ course.course_name }}</div>
+                  <div class="course-header">
+                    <div class="course-name">{{ course.course_name }}</div>
+                    <el-button
+                      type="danger"
+                      size="small"
+                      circle
+                      @click.stop="deleteCourse(course.id)"
+                    >
+                      <el-icon><Delete /></el-icon>
+                    </el-button>
+                  </div>
                   <div class="course-location">
                     <el-icon><Location /></el-icon>
                     {{ course.location }}
@@ -91,7 +101,7 @@
 import { ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
-import { Plus, Location } from '@element-plus/icons-vue'
+import { Plus, Location, Delete } from '@element-plus/icons-vue'
 
 const loading = ref(false)
 const schedule = ref<any[]>([])
@@ -165,6 +175,16 @@ const addCourse = async () => {
     fetchSchedule()
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '添加课程失败')
+  }
+}
+
+const deleteCourse = async (courseId: number) => {
+  try {
+    await request.delete(`/schedule/${courseId}`)
+    ElMessage.success('课程删除成功')
+    fetchSchedule()
+  } catch (error: any) {
+    ElMessage.error(error.response?.data?.message || '删除课程失败')
   }
 }
 

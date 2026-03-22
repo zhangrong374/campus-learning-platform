@@ -47,9 +47,10 @@ export const useUserStore = defineStore('user', () => {
   // 获取当前用户信息
   const fetchCurrentUser = async () => {
     try {
-      const response = await request.get('/student/info')
+      const response = await request.get('/auth/me')
       if (response.data.success) {
-        user.value = response.data.data
+        user.value = response.data.data.user
+        profile.value = response.data.data.profile
         return response.data
       }
       throw new Error('获取用户信息失败')

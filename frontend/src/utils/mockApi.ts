@@ -261,7 +261,21 @@ const mockRequest = {
     try {
       let result;
       const cleanUrl = url.split('?')[0];
-      const params = config?.params || {};
+      
+      // 解析 URL 查询参数
+      const urlParams: any = {};
+      const queryString = url.split('?')[1];
+      if (queryString) {
+        queryString.split('&').forEach(param => {
+          const [key, value] = param.split('=');
+          if (key && value) {
+            urlParams[key] = decodeURIComponent(value);
+          }
+        });
+      }
+      
+      // 合并 config.params 和 URL 参数
+      const params = { ...config?.params, ...urlParams };
 
       // 课程列表（支持搜索和分类）
       if (cleanUrl === '/courses') {
@@ -388,7 +402,11 @@ const mockRequest = {
 
       // 课表
       if (cleanUrl === '/schedule') {
-        result = { success: true, data: mySchedule };
+        let courses = [...mySchedule];
+        if (params.semester) {
+          courses = courses.filter(c => c.semester === params.semester);
+        }
+        result = { success: true, data: courses };
         return { data: result };
       }
 
@@ -453,10 +471,10 @@ const mockRequest = {
       }
 
       // 退出活动
-      if (url.match(/\/activities\/\d+\/leave/)) {
+      if (url.match(/\/activities\/\d+\/leave/) || url.match(/\/activities\/\d+\/cancel/)) {
         const id = parseInt(url.split('/')[2]);
         myActivities = myActivities.filter(a => a.id !== id);
-        result = { success: true, message: '退出活动成功' };
+        result = { success: true, message: '取消报名成功' };
         ElMessage.success(result.message);
         return { data: result };
       }
