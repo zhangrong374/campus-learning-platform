@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
+// 使用 MySQL 配置
 const { testConnection } = require('../backend/src/config/database');
 const errorHandler = require('../backend/src/middleware/errorHandler');
 
@@ -34,6 +36,14 @@ app.use('/api/clubs', clubRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/posts', postRoutes);
+
+// 静态文件服务 - 前端构建文件
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// 前端路由 - 所有非 API 请求都返回 index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 // 错误处理
 app.use(errorHandler);
