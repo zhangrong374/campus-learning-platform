@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "校园学习规划平台 - 前后端一体化部署",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
+    "build": "npm install && cd frontend && npm install && npm run build",
     "start": "node backend/api-pg.js"
   },
   "dependencies": {
