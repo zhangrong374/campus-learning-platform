@@ -1,26 +1,17 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [
     {
-      "src": "backend/api-pg.js",
-      "use": "@vercel/node"
+      "source": "/api/(.*)",
+      "destination": "/backend/api-pg.js"
     },
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/api-pg.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
+      "source": "/(.*)",
+      "destination": "/frontend/dist/$1"
     }
   ]
 }
