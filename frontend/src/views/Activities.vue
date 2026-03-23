@@ -33,7 +33,7 @@
     </el-card>
 
     <el-row :gutter="20" v-loading="loading">
-      <el-col :span="8" v-for="activity in activities" :key="activity.id" style="margin-bottom: 20px">
+      <el-col :span="8" v-for="activity in displayActivities" :key="activity.id" style="margin-bottom: 20px">
         <el-card class="activity-card" shadow="hover">
           <div class="activity-image">
             <el-tag>{{ activity.type }}</el-tag>
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { Search, Calendar, Location, User } from '@element-plus/icons-vue'
@@ -156,6 +156,12 @@ const formatDateTime = (date: string) => {
     minute: '2-digit'
   })
 }
+
+watch(activeTab, (newTab) => {
+  if (newTab === 'my') {
+    fetchMyActivities()
+  }
+})
 
 onMounted(() => {
   fetchActivities()

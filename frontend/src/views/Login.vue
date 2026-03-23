@@ -57,7 +57,6 @@
       <div class="demo-accounts">
         <el-divider>测试账号</el-divider>
         <el-text size="small">
-          管理员: admin / 123456<br />
           学生: student1 / 123456
         </el-text>
       </div>
